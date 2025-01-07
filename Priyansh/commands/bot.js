@@ -655,8 +655,8 @@ if ((event.body.toLowerCase() == "😀") || (event.body.toLowerCase() == "😀�
      return api.sendMessage("Yes <3", threadID);
    };
 
-   if ((event.body.toLowerCase() == "ami juwel") || (event.body.toLowerCase() == "does the bot fall")) {
-     return api.sendMessage("হ্যা জুয়েল ভালো আছো?", threadID);
+   if ((event.body.toLowerCase() == "kashish") || (event.body.toLowerCase() == "does the bot fall")) {
+     return api.sendMessage("meri owner busy h bolo kya km h", threadID);
    };
    mess = "{name}"
 
