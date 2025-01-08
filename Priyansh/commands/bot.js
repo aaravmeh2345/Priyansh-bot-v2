@@ -651,8 +651,8 @@ if ((event.body.toLowerCase() == "😀") || (event.body.toLowerCase() == "😀�
      return api.sendMessage("I'm full when I see you eat <3", threadID);
    };
 
-   if ((event.body.toLowerCase() == "does the bot love me") || (event.body.toLowerCase() == "does the bot love me")) {
-     return api.sendMessage("Yes <3", threadID);
+   if ((event.body.toLowerCase() == "kashish khan") || (event.body.toLowerCase() == "does the bot love me")) {
+     return api.sendMessage("Kashish to meri owner ki dost h owner 2", threadID);
    };
 
    if ((event.body.toLowerCase() == "kashish") || (event.body.toLowerCase() == "does the bot fall")) {
