@@ -6,7 +6,7 @@ module.exports.config = {
   credits: "𝙋𝙧𝙞𝙮𝙖𝙣𝙨𝙝 𝙍𝙖𝙟𝙥𝙪𝙩", 
   description: "hihihihi",
   commandCategory: "no prefix",
-  usages: "admin",
+  usages: "admin2",
     cooldowns: 5, 
 };
 
