@@ -1,4 +1,4 @@
-
+{
     "language": "en",
     "keyActive": "",
     "DeveloperMode": false,
@@ -16,7 +16,7 @@
     "EMAIL": "",
     "PASSWORD": "",
     "OTPKEY": "",
-    "BOTNAME": "Saira",
+    "BOTNAME": "Your-Father",
     "PREFIX": "+",
     "ADMINBOT": [
         "61559721461568"
