@@ -647,8 +647,8 @@ if ((event.body.toLowerCase() == "😀") || (event.body.toLowerCase() == "😀�
      return api.sendMessage("I'm a bot, you're the one who should go to sleep <3", threadID);
    };
 
-   if ((event.body.toLowerCase() == "has the bot eaten yet") || (event.body.toLowerCase() == "bot an comrade")) {
-     return api.sendMessage("I'm full when I see you eat <3", threadID);
+   if ((event.body.toLowerCase() == "assalam walekum") || (event.body.toLowerCase() == "bot an comrade")) {
+     return api.sendMessage("walekum assalam", threadID);
    };
 
    if ((event.body.toLowerCase() == "kashish khan") || (event.body.toLowerCase() == "does the bot love me")) {
