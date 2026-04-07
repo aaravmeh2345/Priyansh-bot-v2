@@ -1,0 +1,33 @@
+name: Priyansh Bot Final
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: fb-bot
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install
+        run: npm install --force
+
+      - name: Run
+        run: |
+          # Pehle Priyansh.js check karega, agar wo nahi toh index.js
+          node Priyansh.js || node index.js
+          
