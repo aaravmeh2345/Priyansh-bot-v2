@@ -1,0 +1,37 @@
+name: Facebook Bot Fix & Run
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 */3 * * *' # Har 3 ghante mein restart (behtar stability ke liye)
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # Latest stable version use karein
+          cache: 'npm'
+
+      - name: Clean Install Dependencies
+        run: |
+          rm -rf node_modules
+          npm install --force
+
+      - name: Run Bot with Auto-Restart
+        run: |
+          while true; do
+            node index.js || echo "Bot crashed, restarting in 10 seconds..."
+            sleep 10
+          done
+        env:
+          NODE_ENV: production
+          
