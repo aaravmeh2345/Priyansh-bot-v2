@@ -1,0 +1,35 @@
+name: Priyansh Bot Final Fix
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: fb-bot
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Dependencies
+        run: npm install --force
+
+      - name: Run Bot
+        run: |
+          echo "Starting Bot Login Process..."
+          node Priyansh.js || node index.js
+        env:
+          NODE_ENV: production
+          
