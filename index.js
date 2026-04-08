@@ -1,23 +1,20 @@
 const { spawn } = require("child_process");
 const axios = require("axios");
 const logger = require("./utils/log");
-
-///////////////////////////////////////////////////////////
-//========= Create website for dashboard/uptime =========//
-///////////////////////////////////////////////////////////
-
 const express = require('express');
 const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 8080;
 
-// Serve the index.html file
+///////////////////////////////////////////////////////////
+//========= Create website for dashboard/uptime =========//
+///////////////////////////////////////////////////////////
+
 app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, '/index.html'));
 });
 
-// Start the server and add error handling
 app.listen(port, () => {
     logger(`Server is running on port ${port}...`, "[ Starting ]");
 }).on('error', (err) => {
@@ -32,9 +29,6 @@ app.listen(port, () => {
 //========= Create start bot and make it loop =========//
 /////////////////////////////////////////////////////////
 
-// Initialize global restart counter
-global.countRestart = global.countRestart || 0;
-
 function startBot(message) {
     if (message) logger(message, "[ Starting ]");
 
@@ -45,17 +39,21 @@ function startBot(message) {
     });
 
     child.on("close", (codeExit) => {
-        if (codeExit !== 0 && global.countRestart < 5) {
-            global.countRestart += 1;
-            logger(`Bot exited with code ${codeExit}. Restarting... (${global.countRestart}/5)`, "[ Restarting ]");
-            startBot();
+        // Agar codeExit 1 hai ya 0 nahi hai, toh bot restart hoga
+        if (codeExit !== 0) {
+            logger(`Bot crashed with exit code ${codeExit}. Restarting in 5 seconds...`, "[ Error ]");
+            setTimeout(() => {
+                startBot();
+            }, 5000); // 5 seconds ka delay taaki Facebook ban na kare spam ki wajah se
         } else {
-            logger(`Bot stopped after ${global.countRestart} restarts.`, "[ Stopped ]");
+            // Manual stop par bhi kabhi kabhi restart chahiye hota hai
+            logger(`Bot was stopped. Restarting...`, "[ Restarting ]");
+            startBot();
         }
     });
 
     child.on("error", (error) => {
-        logger(`An error occurred: ${JSON.stringify(error)}`, "[ Error ]");
+        logger(`An error occurred: ${error.message}`, "[ Error ]");
     });
 };
 
@@ -63,15 +61,15 @@ function startBot(message) {
 //========= Check update from Github =========//
 ////////////////////////////////////////////////
 
+// Isko optional rakhein, agar link dead ho toh bot crash nahi hoga
 axios.get("https://raw.githubusercontent.com/priyanshu192/bot/main/package.json")
     .then((res) => {
-        logger(res.data.name, "[ NAME ]");
-        logger(`Version: ${res.data.version}`, "[ VERSION ]");
-        logger(res.data.description, "[ DESCRIPTION ]");
+        logger(`Project: ${res.data.name}`, "[ INFO ]");
+        logger(`Version: ${res.data.version}`, "[ INFO ]");
     })
     .catch((err) => {
-        logger(`Failed to fetch update info: ${err.message}`, "[ Update Error ]");
+        logger("Could not check for updates, skipping...", "[ Update ]");
     });
 
-// Start the bot
-startBot();
+// Start the bot for the first time
+startBot("Initializing Priyansh Bot...");
