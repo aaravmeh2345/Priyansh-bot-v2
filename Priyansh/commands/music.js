@@ -1,90 +1,99 @@
 module.exports.config = {
     name: "music",
-    version: "2.0.4",
+    version: "2.1.0",
     hasPermssion: 0,
-    credits: "KSHITIZ/kira",//coverted to mirai by kira
-    description: "Play a song with lyrics",
+    credits: "KSHITIZ/kira",
+    description: "Play a song with lyrics and audio",
     usePrefix: false,
     commandCategory: "utility",
-    usages: "[title]",
+    usages: "[song name]",
     cooldowns: 5,
     dependencies: {
         "fs-extra": "",
-        "request": "",
         "axios": "",
         "ytdl-core": "",
         "yt-search": ""
-      }
-    },
-  
-  module.exports.run = async ({ api, event }) => {
-      const axios = require("axios");
-      const fs = require("fs-extra");
-      const ytdl = require("ytdl-core");
-      const request = require("request");
-      const yts = require("yt-search");
-  
-      const input = event.body;
-      const text = input.substring(12);
-      const data = input.split(" ");
-  
-      if (data.length < 2) {
-        return api.sendMessage("Please write music name", event.threadID);
-      }
-  
-      data.shift();
-      const song = data.join(" ");
-  
-      try {
-        api.sendMessage(`🔍 | 𝙎𝙚𝙖𝙧𝙘𝙝𝙞𝙣𝙜 𝙥𝙡𝙚𝙖𝙨𝙚 𝙬𝙖𝙞𝙩...`, event.threadID);
-  
-        const res = await axios.get(`https://api.popcat.xyz/lyrics?song=${encodeURIComponent(song)}`);
-        const lyrics = res.data.lyrics || "Not found!";
-        const title = res.data.title || "Not found!";
-        const artist = res.data.artist || "Not found!";
-  
+    }
+};
+
+module.exports.run = async ({ api, event, args }) => {
+    const axios = require("axios");
+    const fs = require("fs-extra");
+    const ytdl = require("ytdl-core");
+    const yts = require("yt-search");
+
+    const song = args.join(" ");
+
+    if (!song) {
+        return api.sendMessage("Please enter a music name!", event.threadID, event.messageID);
+    }
+
+    try {
+        api.sendMessage(`🔍 | Searching for "${song}"...`, event.threadID, (err, info) => {
+            setTimeout(() => api.unsendMessage(info.messageID), 5000);
+        }, event.messageID);
+
+        // Lyrics Search
+        let lyrics = "Not found!";
+        let title = "Unknown";
+        let artist = "Unknown";
+
+        try {
+            const res = await axios.get(`https://api.popcat.xyz/lyrics?song=${encodeURIComponent(song)}`);
+            lyrics = res.data.lyrics || "Lyrics not found!";
+            title = res.data.title || "Not found!";
+            artist = res.data.artist || "Not found!";
+        } catch (e) {
+            console.log("Lyrics API Error");
+        }
+
+        // YouTube Search
         const searchResults = await yts(song);
         if (!searchResults.videos.length) {
-          return api.sendMessage("Error: Invalid request.", event.threadID, event.messageID);
+            return api.sendMessage("❌ Error: Song not found on YouTube.", event.threadID, event.messageID);
         }
-  
-        const video = searchResults.videos[0];
+
+        const video = searchResults.videos;
         const videoUrl = video.url;
-  
-        const stream = ytdl(videoUrl, { filter: "audioonly" });
-  
-        const fileName = `${event.senderID}.mp3`;
-        const filePath = __dirname + `/cache/${fileName}`;
-  
-        stream.pipe(fs.createWriteStream(filePath));
-  
-        stream.on('response', () => {
-          console.info('[DOWNLOADER]', 'Starting download now!');
+        const stream = ytdl(videoUrl, { filter: "audioonly", quality: "highestaudio" });
+
+        const path = __dirname + `/cache/${event.senderID}_music.mp3`;
+
+        // Create Cache folder if it doesn't exist
+        if (!fs.existsSync(__dirname + "/cache")) {
+            fs.mkdirSync(__dirname + "/cache");
+        }
+
+        const fileStream = fs.createWriteStream(path);
+        stream.pipe(fileStream);
+
+        fileStream.on('finish', () => {
+            const stats = fs.statSync(path);
+            const fileSizeInBytes = stats.size;
+
+            if (fileSizeInBytes > 26214400) { // 25MB check
+                fs.unlinkSync(path);
+                return api.sendMessage("❌ File size is too large (over 25MB).", event.threadID, event.messageID);
+            }
+
+            const message = {
+                body: `🎵 𝙏𝙞𝙩𝙡𝙚: ${video.title}\n🎤 𝘼𝙧𝙩𝙞𝙨𝙩: ${video.author.name}\n\n📝 𝙇𝙮𝙧𝙞𝙘𝙨:\n${lyrics.substring(0, 1500)}...`,
+                attachment: fs.createReadStream(path)
+            };
+
+            api.sendMessage(message, event.threadID, () => {
+                if (fs.existsSync(path)) fs.unlinkSync(path);
+            }, event.messageID);
         });
-  
-        stream.on('info', (info) => {
-          console.info('[DOWNLOADER]', `Downloading ${info.videoDetails.title} by ${info.videoDetails.author.name}`);
+
+        stream.on('error', (error) => {
+            console.error('[YTDL ERROR]', error);
+            api.sendMessage("❌ An error occurred during streaming.", event.threadID);
+            if (fs.existsSync(path)) fs.unlinkSync(path);
         });
-  
-        stream.on('end', () => {
-          console.info('[DOWNLOADER] Downloaded');
-  
-          if (fs.statSync(filePath).size > 26214400) {
-            fs.unlinkSync(filePath);
-            return api.sendMessage('[ERR] The file could not be sent because it is larger than 25MB.', event.threadID);
-          }
-  
-          const message = {
-            body: `❏ 𝙩𝙞𝙩𝙡𝙚: ${title}\n❏ 𝙖𝙧𝙩𝙞𝙨𝙩: ${artist}\n\n❏ 𝙡𝙮𝙧𝙞𝙘𝙨: ${lyrics}`,
-            attachment: fs.createReadStream(filePath)
-          };
-  
-          api.sendMessage(message, event.threadID, () => {
-            fs.unlinkSync(filePath);
-          });
-        });
-      } catch (error) {
-        console.error('[ERROR]', error);
-        api.sendMessage('try again later > error.', event.threadID);
-      }
-  };
+
+    } catch (error) {
+        console.error('[SYSTEM ERROR]', error);
+        api.sendMessage('❌ Error: Could not process request.', event.threadID);
+    }
+};
