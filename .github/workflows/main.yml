@@ -1,0 +1,38 @@
+name: Priyansh Bot Final Fix
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 */6 * * *' # Har 6 ghante mein auto-run hoga
+  workflow_dispatch: # Manual start button
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    # Double reply fix karne ke liye: naya start hone par purana stop ho jayega
+    concurrency:
+      group: fb-bot-session
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'npm'
+
+      - name: Clean Install
+        run: |
+          rm -rf node_modules
+          npm install --production --force
+
+      - name: Start Bot
+        run: |
+          node Priyansh.js || node index.js
+        env:
+          NODE_ENV: production
+          
