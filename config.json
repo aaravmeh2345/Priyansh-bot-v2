@@ -7,16 +7,12 @@
     "NOTIFICATION": true,
     "allowInbox": false,
     "autoClean": true,
-    "commandDisabled": [
-        "sim.js"
-    ],
-    "eventDisabled": [
-        "join.js"
-    ],
+    "commandDisabled": [],
+    "eventDisabled": [],
     "EMAIL": "",
     "PASSWORD": "",
     "OTPKEY": "",
-    "BOTNAME": "Aaru",
+    "BOTNAME": "Piki Pai",
     "PREFIX": "+",
     "ADMINBOT": [
         "61583911932183"
@@ -43,7 +39,7 @@
         "caeserPassword": "266303"
     },
     "cave": {
-        "cooldownTime": 2000000
+        "cooldownTime": 60000
     },
     "checktt": {
         "maxColumn": 300
@@ -53,7 +49,7 @@
         "rewardCoin": 1000
     },
     "diemdanh": {
-        "cooldownTime": 3000000
+        "cooldownTime": 300000
     },
     "gif": {
         "TENOR": "73YIAOY3ACT1"
@@ -94,7 +90,7 @@
         "OPEN_WEATHER": "c4ef85b93982d6627681b056e24bd438"
     },
     "work": {
-        "cooldownTime": 1200000
+        "cooldownTime": 600000
     },
     "log": {
         "enable": true
@@ -127,16 +123,16 @@
     },
     "adminOnly": false,
     "cavevip": {
-        "cooldownTime": 1200000
+        "cooldownTime": 600000
     },
     "lixi": {
-        "cooldownTime": 1100000
+        "cooldownTime": 600000
     },
     "sim": {
         "APIKEY": "Priyansh_1234567890"
     },
     "lamviec": {
-        "cooldownTime": 1200000
+        "cooldownTime": 600000
     },
     "xidach": {
         "maxPlayers": 5,
@@ -192,7 +188,7 @@
         "fpt_apikey": "MhYPX3ksxwdqLC63LiAR4r47sOrkSdhj"
     },
     "anime": {
-        "cooldownTime": 1200000
+        "cooldownTime": 600000
     },
     "bannermkt": {
         "APIKEY": "tdunguwu"
@@ -217,7 +213,7 @@
         "cooldownTime": 5000
     },
     "fish": {
-        "cooldownTime": 1000000
+        "cooldownTime": 600000
     },
     "sing2": {
         "YOUTUBE_API": "AIzaSyBPdGN3eMhswfSKWoaomzdlEftf3NjV1gM",
